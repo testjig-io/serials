@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="lightserial" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="release">
+				<Option output="build/release/lightserial" prefix_auto="1" extension_auto="1" />
+				<Option object_output="build/obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="./.." />
+					<Add directory="." />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="examples/master.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="examples/slave.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lightserial.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lightserial.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
