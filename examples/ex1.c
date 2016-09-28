@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "lightserial.h"
+#include "serials.h"
 
 //----------------------------------------------------------------------------
-// Circular buffer functions
+// Circular buffers, to be used in a producer-consumer fashion, simulating a
+// communication channel
+
 typedef struct
 {
     uint8_t *buf;
@@ -51,7 +53,7 @@ uint32_t cbuf_read(cbuf_t *cbuf, uint8_t *dest, uint32_t max)
     return max;
 }
 //----------------------------------------------------------------------------
-
+// Setup the communication channels (circular buffers)
 #define BUF_LEN 64
 uint8_t m_buf[BUF_LEN], s_buf[BUF_LEN];
 cbuf_t m_cbuf, s_cbuf;
@@ -81,11 +83,8 @@ void s_send_byte(uint8_t b)
 {
     cbuf_write(&m_cbuf, &b, 1);
 }
+
 //----------------------------------------------------------------------------
-#define DUMMY_LEN 8
-
-uint8_t m_rx_buf[BUF_LEN], s_rx_buf[BUF_LEN];
-
 void dump_data(uint8_t *data, uint32_t count)
 {
     uint32_t i;
@@ -98,6 +97,11 @@ void dump_data(uint8_t *data, uint32_t count)
             printf("\n");
     }
 }
+//----------------------------------------------------------------------------
+
+// Buffers used to store data received from the communication channels
+#define DUMMY_LEN 8
+uint8_t m_rx_buf[BUF_LEN], s_rx_buf[BUF_LEN];
 
 int main()
 {
@@ -124,7 +128,6 @@ int main()
     uint8_t rx_buf[BUF_LEN];
     for(i=0; i < DUMMY_LEN; i++) dummy[i] = i;
 
-    // Master sends bytes to slave
     printf("Master sends bytes to slave\n");
     dump_data(dummy, DUMMY_LEN);
     serials_send_bytes(&master, dummy, DUMMY_LEN);
@@ -140,15 +143,8 @@ int main()
         printf("CMD:%02X ARG:%02X\n", pkt->cmd, pkt->arg);
         dump_data(pkt->data, pkt->data_count);
 
-        //printf("Slave sends ACK\n");
-        //serials_send_ack(&slave);
-
         printf("Slave sends ERR\n");
         serials_send_err(&slave, 0x12);
-    }
-    else
-    {
-        puts("Oooops!");
     }
 
     printf("Master read bytes\n");
@@ -162,7 +158,6 @@ int main()
         printf("CMD:%02X ARG:%02X\n", pkt->cmd, pkt->arg);
         dump_data(pkt->data, pkt->data_count);
     }
-
 
     puts("Done");
     return 0;

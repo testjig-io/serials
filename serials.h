@@ -15,13 +15,13 @@
 // by the user. All fields are 1-byte wide, except DATA which is a
 // byte array.
 
-#define LS_NO_ARG	0xFF
+#define SERIALS_NO_ARG	0xFF
 
 typedef enum serials_cmd_e
 {
-	LS_CMD_ACK 		= 0xAA,
-	LS_CMD_ERR 		= 0xFF,
-	LS_CMD_BYTES	= 0x01,
+	SERIALS_CMD_ACK 		= 0xAA,
+	SERIALS_CMD_ERR 		= 0xFF,
+	SERIALS_CMD_BYTES	= 0x01,
 } serials_cmd_t;
 
 typedef struct serials_pkt_s
