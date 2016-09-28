@@ -105,19 +105,19 @@ int main()
     setup_buffers();
 
     printf("Init LightSerial instances\n");
-    ls_t master, slave;
+    serials_t master, slave;
 
-    ls_init_t init;
+    serials_init_t init;
     init.rx_buf_len = BUF_LEN;
     init.cb_rxpkt_ready = 0;
 
     init.rx_buf = m_rx_buf;
     init.fn_send_byte = m_send_byte;
-    ls_init(&master, &init);
+    serials_init(&master, &init);
 
     init.rx_buf = s_rx_buf;
     init.fn_send_byte = s_send_byte;
-    ls_init(&slave, &init);
+    serials_init(&slave, &init);
 
     uint32_t i, count;
     uint8_t dummy[DUMMY_LEN];
@@ -127,24 +127,24 @@ int main()
     // Master sends bytes to slave
     printf("Master sends bytes to slave\n");
     dump_data(dummy, DUMMY_LEN);
-    ls_send_bytes(&master, dummy, DUMMY_LEN);
+    serials_send_bytes(&master, dummy, DUMMY_LEN);
 
     printf("Slave read bytes\n");
     count = s_read(rx_buf, BUF_LEN);
     printf("Slave parse bytes\n");
-    ls_parse_bytes(&slave, rx_buf, count);
-    if(ls_rxpkt_ready(&slave))
+    serials_parse_bytes(&slave, rx_buf, count);
+    if(serials_rxpkt_ready(&slave))
     {
         printf("Slave received a packet!\n");
-        ls_pkt_t *pkt = ls_rxpkt(&slave);
+        serials_pkt_t *pkt = serials_rxpkt(&slave);
         printf("CMD:%02X ARG:%02X\n", pkt->cmd, pkt->arg);
         dump_data(pkt->data, pkt->data_count);
 
         //printf("Slave sends ACK\n");
-        //ls_send_ack(&slave);
+        //serials_send_ack(&slave);
 
         printf("Slave sends ERR\n");
-        ls_send_err(&slave, 0x12, "ABC");
+        serials_send_err(&slave, 0x12);
     }
     else
     {
@@ -154,11 +154,11 @@ int main()
     printf("Master read bytes\n");
     count = m_read(rx_buf, BUF_LEN);
     printf("Master parse bytes\n");
-    ls_parse_bytes(&master, rx_buf, count);
-    if(ls_rxpkt_ready(&master))
+    serials_parse_bytes(&master, rx_buf, count);
+    if(serials_rxpkt_ready(&master))
     {
         printf("Master received a packet!\n");
-        ls_pkt_t *pkt = ls_rxpkt(&master);
+        serials_pkt_t *pkt = serials_rxpkt(&master);
         printf("CMD:%02X ARG:%02X\n", pkt->cmd, pkt->arg);
         dump_data(pkt->data, pkt->data_count);
     }
